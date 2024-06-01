@@ -22,7 +22,7 @@ const ListenScrubber = ({course, lesson, seekTo}: Props) => {
 
   useEffect(() => {
     const interval = setInterval(async () => {
-      const position = await TrackPlayer.getPosition();
+      const position = (await TrackPlayer.getProgress()).position;
 
       setPosition(position || 0);
     }, 200);

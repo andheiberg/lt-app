@@ -1,4 +1,4 @@
-platform :ios, '11.0'
+platform :ios, '15.0'
 require_relative '../node_modules/react-native/scripts/react_native_pods'
 require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
 
@@ -23,7 +23,7 @@ target 'LanguageTransfer' do
     react_native_post_install(installer)
     installer.pods_project.build_configurations.each do |config|
       config.build_settings["EXCLUDED_ARCHS[sdk=iphonesimulator*]"] = "arm64"
-      config.build_settings["IPHONEOS_DEPLOYMENT_TARGET"] = "9.0"
+      config.build_settings.delete 'IPHONEOS_DEPLOYMENT_TARGET'
     end
   end
 end
