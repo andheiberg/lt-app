@@ -376,7 +376,7 @@ PODS:
     - React-Core
   - RNVectorIcons (6.7.0):
     - React
-  - SocketRocket (0.6.0)
+  - SocketRocket (0.6.1)
   - SwiftAudioEx (0.14.7)
   - Yoga (1.14.0)
   - YogaKit (1.18.1):
@@ -622,11 +622,11 @@ SPEC CHECKSUMS:
   RNReanimated: c1b56d030d1616239861534d9adb531f8cffab68
   RNScreens: f7ad633b2e0190b77b6a7aab7f914fad6f198d8d
   RNVectorIcons: 368d6d8b8301224e5ffb6254191f4f8876c2be0d
-  SocketRocket: fccef3f9c5cedea1353a9ef6ada904fde10d6608
+  SocketRocket: f32cd54efbe0f095c4d7594881e52619cfe80b17
   SwiftAudioEx: 3a4024e48f3b3e45dac6bf2668d7adbe7b83f50e
   Yoga: 99652481fcd320aefa4a7ef90095b95acd181952
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
-PODFILE CHECKSUM: bfa19de3e345f445377fed12260434b0ce04f43d
+PODFILE CHECKSUM: 9d2b3aa6fcd5603c09a941cb2e1cc888e043255c
 
 COCOAPODS: 1.15.2
