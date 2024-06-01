@@ -1,5 +1,5 @@
 import {Platform} from 'react-native'; 
-import TrackPlayer, {State, Event, Capability, IOSCategory} from 'react-native-track-player';
+import TrackPlayer, {State, Event, Capability, AppKilledPlaybackBehavior} from 'react-native-track-player';
 import BackgroundTimer, {IntervalId} from 'react-native-background-timer';
 import {
   genAutopause,
@@ -31,7 +31,10 @@ export const genEnqueueFile = async (
   await TrackPlayer.setupPlayer();
 
   TrackPlayer.updateOptions({
-    stopWithApp: false,
+    android: {
+      appKilledPlaybackBehavior: AppKilledPlaybackBehavior.StopPlaybackAndRemoveNotification,
+      alwaysPauseOnInterruption: true,
+    },
     capabilities: [
       Capability.Play,
       Capability.Pause,
@@ -49,7 +52,6 @@ export const genEnqueueFile = async (
       Capability.JumpBackward,
     ],
     backwardJumpInterval: 10,
-    alwaysPauseOnInterruption: true,
     color: parseInt(
       CourseData.getCourseUIColors(course).background.substring(1),
       16,
@@ -116,7 +118,6 @@ export const genEnqueueFile = async (
 export const genStopPlaying = async () => {
   currentlyPlaying = null;
   await TrackPlayer.pause(); // might fix bugs where sometimes the notification goes away but keeps playing
-  await TrackPlayer.destroy();
 };
 
 export default async () => {
@@ -125,7 +126,7 @@ export default async () => {
   audioServiceSubscriptions = [
     TrackPlayer.addEventListener(Event.RemotePlay, async () => {
       await TrackPlayer.play();
-      const position = await TrackPlayer.getPosition();
+      const position = (await TrackPlayer.getProgress()).position;
       log({
         action: 'play',
         surface: 'remote',
@@ -137,7 +138,7 @@ export default async () => {
 
     TrackPlayer.addEventListener(Event.RemotePause, async () => {
       await TrackPlayer.pause();
-      const position = await TrackPlayer.getPosition();
+      const position = (await TrackPlayer.getProgress()).position;
       log({
         action: 'pause',
         surface: 'remote',
@@ -148,7 +149,7 @@ export default async () => {
     }),
 
     TrackPlayer.addEventListener(Event.RemoteStop, async () => {
-      const position = await TrackPlayer.getPosition();
+      const position = (await TrackPlayer.getProgress()).position;
       log({
         action: 'stop',
         surface: 'remote',
@@ -162,7 +163,7 @@ export default async () => {
     TrackPlayer.addEventListener(
       Event.RemoteJumpBackward,
       async ({interval}) => {
-        const position = await TrackPlayer.getPosition();
+        const position = (await TrackPlayer.getProgress()).position;
         log({
           action: 'jump_backward',
           surface: 'remote',
@@ -193,7 +194,7 @@ export default async () => {
             return;
         }
 
-        // const position = await TrackPlayer.getPosition();
+        // const position = (await TrackPlayer.getProgress()).position;
 
         // // ...todo. needs to be at least 0.5s or some threshold after current position
         // const nextPause = position + 4000;
@@ -214,11 +215,11 @@ export default async () => {
 
           const update = async () => {
             const [position, currState] = await Promise.all([
-              TrackPlayer.getPosition(),
-              TrackPlayer.getState(),
+              TrackPlayer.getProgress(),
+              TrackPlayer.getPlaybackState(),
             ]);
 
-            if (currState !== State.Playing) {
+            if (currState.state !== State.Playing) {
               // happens sometimes. /shrug
               if (updateInterval) {
                 BackgroundTimer.clearInterval(updateInterval);
@@ -226,11 +227,11 @@ export default async () => {
               return;
             }
 
-            if (position !== null && currentlyPlaying) {
+            if (position.position !== null && currentlyPlaying) {
               await genUpdateProgressForLesson(
                 currentlyPlaying.course,
                 currentlyPlaying.lesson,
-                position as number,
+                position.position as number,
               );
             }
           };
@@ -250,7 +251,7 @@ export default async () => {
     // I have a personal policy of including explicit blame whenever I write code I know someone will curse me for one day.
     // contact me@timothyaveni.com with your complaints.
     TrackPlayer.addEventListener(
-      Event.PlaybackTrackChanged,
+      Event.PlaybackActiveTrackChanged,
       async (params) => {
         const wasPlaying = currentlyPlaying;
 

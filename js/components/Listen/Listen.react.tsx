@@ -78,7 +78,7 @@ const Listen = (props: any) => {
         surface: 'listen_screen',
         course,
         lesson,
-        position: await TrackPlayer.getPosition(),
+        position: (await TrackPlayer.getProgress()).position,
       });
     } else {
       TrackPlayer.pause();
@@ -88,7 +88,7 @@ const Listen = (props: any) => {
         surface: 'listen_screen',
         course,
         lesson,
-        position: await TrackPlayer.getPosition(),
+        position: (await TrackPlayer.getProgress()).position,
       });
     }
   };
@@ -99,7 +99,7 @@ const Listen = (props: any) => {
       surface: 'listen_screen',
       course,
       lesson,
-      position: await TrackPlayer.getPosition(),
+      position: (await TrackPlayer.getProgress()).position,
     });
 
     TrackPlayer.seekTo(seconds);
@@ -111,10 +111,10 @@ const Listen = (props: any) => {
       surface: 'listen_screen',
       course,
       lesson,
-      position: await TrackPlayer.getPosition(),
+      position: (await TrackPlayer.getProgress()).position,
     });
 
-    TrackPlayer.seekTo(Math.max(0, await TrackPlayer.getPosition() - 10));
+    TrackPlayer.seekTo(Math.max(0, (await TrackPlayer.getProgress()).position - 10));
   };
 
   return (

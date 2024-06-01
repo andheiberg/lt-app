@@ -137,7 +137,7 @@ const ListenBody = ({course, lesson, setBottomSheetOpen, skipBack, seekTo, toggl
             surface: 'listen_screen',
             course,
             lesson,
-            position: await TrackPlayer.getPosition(),
+            position: (await TrackPlayer.getProgress()).position,
           });
           setBottomSheetOpen(true);
         }}
@@ -147,7 +147,7 @@ const ListenBody = ({course, lesson, setBottomSheetOpen, skipBack, seekTo, toggl
             surface: 'listen_screen',
             course,
             lesson,
-            position: await TrackPlayer.getPosition(),
+            position: (await TrackPlayer.getProgress()).position,
           });
           setBottomSheetOpen(false);
         }}>
